@@ -1,7 +1,7 @@
 {
     "name": "Hugo Blog",
     "short_name": "Hugo Blog",
-    "start_url": "https://hadobot.github.io/",
+    "start_url": "http://localhost:1313/",
     "theme_color": "#434648",
     "background_color": "#ffffff",
     "display": "standalone",
