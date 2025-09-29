@@ -1,307 +1,16 @@
-<!doctype html>
-<html lang=en-us dir=ltr>
-
-<head>
-    <meta charset=utf-8>
-    <meta name=viewport content='width=device-width,initial-scale=1'>
-    <meta name=description
-        content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models.">
-    <title>Heart Disease Prediction Using Machine Learning</title>
-    <link rel=canonical href=https://hadobot.github.io/p/heart-disease-prediction-using-machine-learning />
-    <link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css>
-    <meta property='og:title' content="Heart Disease Prediction Using Machine Learning">
-    <meta property='og:description'
-        content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models.">
-    <meta property='og:url' content='https://hadobot.github.io/p/heart-disease-prediction-using-machine-learning/'>
-    <meta property='og:site_name' content='Hadobot Blog'>
-    <meta property='og:type' content='article'>
-    <meta property='article:section' content='Post'>
-    <meta property='article:tag' content='Machine Learning'>
-    <meta property='article:tag' content='Healthcare'>
-    <meta property='article:tag' content='Heart Disease'>
-    <meta property='article:tag' content='Internship Project'>
-    <meta property='article:published_time' content='2025-09-14T00:00:00+00:00'>
-    <meta property='article:modified_time' content='2025-09-14T00:00:00+00:00'>
-    <meta name=twitter:title content="Heart Disease Prediction Using Machine Learning">
-    <meta name=twitter:description
-        content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models.">
-    <link rel="shortcut icon" href=/favicon.png>
-</head>
-
-<body class=article-page>
-    <script>(function () { const e = "StackColorScheme"; localStorage.getItem(e) || localStorage.setItem(e, "auto") })()</script>
-    <script>(function () { const t = "StackColorScheme", e = localStorage.getItem(t), n = window.matchMedia("(prefers-color-scheme: dark)").matches === !0; e == "dark" || e === "auto" && n ? document.documentElement.dataset.scheme = "dark" : document.documentElement.dataset.scheme = "light" })()</script>
-    <div class="container main-container flex on-phone--column extended">
-        <aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu
-                aria-label="Toggle Menu">
-                <span class=hamburger-box><span class=hamburger-inner></span></span></button>
-            <header>
-                <figure class=site-avatar><a href= /><img src=/img/avatar_hu_c68a00bbf16dac8.png width=300 height=300
-                        class=site-logo loading=lazy alt=Avatar>
-                    </a><span class=emoji>🍥</span></figure>
-                <div class=site-meta>
-                    <h1 class=site-name><a href= />Hadobot Blog</a></h1>
-                    <h2 class=site-description>Welcome to my Blog!</h2>
-                </div>
-            </header>
-            <ol class=menu-social>
-                <li><a href=https://github.com/Hadobot target=_blank title=GitHub rel=me><svg
-                            class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24"
-                            stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <path
-                                d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" />
-                        </svg></a></li>
-            </ol>
-            <ol class=menu id=main-menu>
-                <li><a href= /><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24"
-                        stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <polyline points="5 12 3 12 12 3 21 12 19 12" />
-                        <path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                        <path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6" />
-                    </svg>
-                    <span>Home</span></a>
-                </li>
-                <li><a href=/archives /><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24"
-                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <rect x="3" y="4" width="18" height="4" rx="2" />
-                        <path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8" />
-                        <line x1="10" y1="12" x2="14" y2="12" />
-                    </svg>
-                    <span>Archives</span></a>
-                </li>
-                <li><a href=/search /><svg class="icon icon-tabler icon-tabler-search" width="24" height="24"
-                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <circle cx="10" cy="10" r="7" />
-                        <line x1="21" y1="21" x2="15" y2="15" />
-                    </svg>
-                    <span>Search</span></a>
-                </li>
-                <li><a href=/links /><svg class="icon icon-tabler icon-tabler-link" width="24" height="24"
-                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5" />
-                        <path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5" />
-                    </svg>
-                    <span>Links</span></a>
-                </li>
-                <li class=menu-bottom-section>
-                    <ol class=menu>
-                        <li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24"
-                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <circle cx="8" cy="12" r="2" />
-                                <rect x="2" y="6" width="20" height="12" rx="6" />
-                            </svg>
-                            <svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <circle cx="16" cy="12" r="2" />
-                                <rect x="2" y="6" width="20" height="12" rx="6" />
-                            </svg>
-                            <span>Dark Mode</span>
-                        </li>
-                    </ol>
-                </li>
-            </ol>
-        </aside>
-        <aside class="sidebar right-sidebar sticky">
-            <section class="widget archives">
-                <div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24"
-                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" />
-                        <line x1="5" y1="9" x2="19" y2="9" />
-                        <line x1="5" y1="15" x2="19" y2="15" />
-                        <line x1="11" y1="4" x2="7" y2="20" />
-                        <line x1="17" y1="4" x2="13" y2="20" />
-                    </svg></div>
-                <h2 class="widget-title section-title">Table of contents</h2>
-                <div class=widget--toc>
-                    <nav id=TableOfContents>
-                        <ol>
-                            <li><a href=#1-imports-and-setup>1. Imports and setup</a></li>
-                            <li><a href=#2-loading-the-data>2. Loading the data</a></li>
-                            <li><a href=#3-cleaning--preprocessing--principles>3. Cleaning & preprocessing —
-                                    principles</a></li>
-                            <li><a href=#4-exploratory-data-analysis-eda>4. Exploratory Data Analysis (EDA)</a></li>
-                        </ol>
-                        <ol>
-                            <li><a href=#1-logistic-regression--baseline-linear-model>1. Logistic Regression — baseline
-                                    linear model</a></li>
-                            <li><a href=#2-decision-tree--simple-interpretable-nonlinear-model>2. Decision Tree —
-                                    simple, interpretable nonlinear model</a></li>
-                            <li><a href=#3-random-forest--ensemble-of-trees>3. Random Forest — ensemble of trees</a>
-                            </li>
-                            <li><a href=#4-neural-network-mlp--simple-feedforward-net>4. Neural Network (MLP) — simple
-                                    feedforward net</a></li>
-                        </ol>
-                        <ol>
-                            <li><a href=#model-performance-summary>Model Performance Summary</a></li>
-                        </ol>
-                    </nav>
-                </div>
-            </section>
-        </aside>
-        <main class="main full-width">
-            <article class=main-article>
-                <header class=article-header>
-                    <div class=article-details>
-                        <header class=article-category><a href=/categories/projects />Projects
-                            </a><a href=/categories/machine-learning />Machine Learning</a></header>
-                        <div class=article-title-wrapper>
-                            <h2 class=article-title><a href=/p/heart-disease-prediction-using-machine-learning />Heart
-                                Disease Prediction Using Machine Learning</a></h2>
-                        </div>
-                        <footer class=article-time>
-                            <div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                    <path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4" />
-                                    <circle cx="18" cy="18" r="4" />
-                                    <path d="M15 3v4" />
-                                    <path d="M7 3v4" />
-                                    <path d="M3 11h16" />
-                                    <path d="M18 16.496V18l1 1" />
-                                </svg>
-                                <time class=article-time--published>Sep 14, 2025</time>
-                            </div>
-                            <div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                    <circle cx="12" cy="12" r="9" />
-                                    <polyline points="12 7 12 12 15 15" />
-                                </svg>
-                                <time class=article-time--reading>13 minute read</time>
-                            </div>
-                        </footer>
-                    </div>
-                </header>
-                <section class=article-content>
-                    <meta name=viewport content="width=device-width,initial-scale=1">
-                    <h1 id=from-concepts-to-code>From Concepts to Code</h1>
-                    <p>In my first post I wrote about <em>why</em> I wanted to start documenting my learning journey.
-                        This second post puts that idea into practice: it’s a thorough record of the major project I
-                        completed as part of the <strong>Ediglobe</strong> online AI/ML internship. The program guided
-                        me from Python basics to model-building, and the final assignment asked me to apply those skills
-                        to a real-world problem. I chose <strong>Heart Disease Prediction</strong> because it’s both
-                        technically interesting and socially important.</p>
-                    <blockquote>
-                        <p>This article is meant to be both a narrative of my experience and a practical reference. I
-                            include detailed code snippets and explanations so you (or my future self) can reproduce the
-                            work or extend it.</p>
-                    </blockquote>
-                    <hr>
-                    <h1 id=project-overview>Project Overview</h1>
-                    <p><strong>Problem statement :</strong> Given clinical attributes for patients (age, cholesterol,
-                        chest pain type, etc.), predict whether they have heart disease.</p>
-                    <p><strong>Goal:</strong> Build and compare multiple classification models like Logistic Regression,
-                        Decision Tree, Random Forest, and a simple Neural Network, evaluate them using standard metrics,
-                        and interpret what features are most influential.
-                        This was an independent project completed remotely during an online internship offered by
-                        Ediglobe.</p>
-                    <p><strong>Dataset used:</strong> The UCI Heart Disease dataset — a widely used tabular dataset in
-                        ML education and research that aggregates clinical measurements relevant to Heart Disease risk.
-                        Typical fields include age, sex, various ECG/blood-test related measures, chest pain type,
-                        maximum heart rate. The <code>target</code> column is binary (0 = no heart disease, 1 = heart
-                        disease).</p>
-                    <hr>
-                    <h1 id=understanding-the-data>Understanding the Data</h1>
-                    <p>Before you start modeling, understanding what each column <em>means</em> is crucial. Here’s a
-                        compact explanation of the common fields and why they matter:</p>
-                    <div class=table-wrapper>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Field Name</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>age</strong></td>
-                                    <td>Patient age in years. Cardiovascular risk generally increases with age.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>sex</strong></td>
-                                    <td>Biological sex; some heart disease patterns differ by sex.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>chest_pain_type</strong></td>
-                                    <td>Type and severity of chest pain; often a strong clinical cue.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>resting_blood_pressure</strong></td>
-                                    <td>High blood pressure is a known cardiovascular risk factor.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>cholestoral</strong></td>
-                                    <td>Elevated cholesterol correlates with atherosclerosis.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>fasting_blood_sugar</strong></td>
-                                    <td>Diabetes/insulin resistance can increase heart risk.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>rest_ecg</strong></td>
-                                    <td>Indicates abnormalities in heart rhythm or structure.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Max_heart_rate</strong></td>
-                                    <td>Exercise response can be predictive.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>exercise_induced_angina</strong></td>
-                                    <td>Presence/absence of angina during exercise.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>oldpeak</strong></td>
-                                    <td>Exercise-induced ST depression can indicate ischemia.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>slope</strong></td>
-                                    <td>Shape of ST segment rise/fall.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>vessels_colored_by_flourosopy</strong></td>
-                                    <td>More vessels often indicate worse blockage.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>thalassemia</strong></td>
-                                    <td>Represents blood oxygenation anomaly types.</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>target</strong></td>
-                                    <td>The target variable for prediction (e.g., presence of heart disease).</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p>Understanding these makes it easier to engineer features later and also to interpret model
-                        outputs.</p>
-                    <hr>
-                    <h1 id=the-step-by-step-pipeline>The Step-by-Step Pipeline</h1>
-                    <p>Below I walk through my exact pipeline, explaining why I chose each step. The code is the same as
-                        what I ran during the Internship; I have annotated it heavily so you know the motivation.</p>
-                    <h2 id=1-imports-and-setup>1. Imports and setup</h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models."><title>Heart Disease Prediction Using Machine Learning</title><link rel=canonical href=https://hadobot.github.io/p/heart-disease-prediction-using-machine-learning/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="Heart Disease Prediction Using Machine Learning"><meta property='og:description' content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models."><meta property='og:url' content='https://hadobot.github.io/p/heart-disease-prediction-using-machine-learning/'><meta property='og:site_name' content='Hadobot Blog'><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Machine Learning'><meta property='article:tag' content='Healthcare'><meta property='article:tag' content='Heart Disease'><meta property='article:tag' content='Internship Project'><meta property='article:published_time' content='2025-09-14T00:00:00+00:00'><meta property='article:modified_time' content='2025-09-14T00:00:00+00:00'><meta name=twitter:title content="Heart Disease Prediction Using Machine Learning"><meta name=twitter:description content="A comprehensive, step-by-step account of a major internship project from Ediglobe: using the UCI Heart Disease dataset to build, evaluate, and interpret several machine learning models."><link rel="shortcut icon" href=/favicon.png></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="Toggle Menu">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu_c68a00bbf16dac8.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>Hadobot Blog</a></h1><h2 class=site-description>Welcome to my Blog!</h2></div></header><ol class=menu-social><li><a href=https://github.com/Hadobot target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>Dark Mode</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">Table of contents</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#1-imports-and-setup>1. Imports and setup</a></li><li><a href=#2-loading-the-data>2. Loading the data</a></li><li><a href=#3-cleaning--preprocessing--principles>3. Cleaning & preprocessing — principles</a></li><li><a href=#4-exploratory-data-analysis-eda>4. Exploratory Data Analysis (EDA)</a></li></ol><ol><li><a href=#1-logistic-regression--baseline-linear-model>1. Logistic Regression — baseline linear model</a></li><li><a href=#2-decision-tree--simple-interpretable-nonlinear-model>2. Decision Tree — simple, interpretable nonlinear model</a></li><li><a href=#3-random-forest--ensemble-of-trees>3. Random Forest — ensemble of trees</a></li><li><a href=#4-neural-network-mlp--simple-feedforward-net>4. Neural Network (MLP) — simple feedforward net</a></li></ol><ol><li><a href=#model-performance-summary>Model Performance Summary</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/projects/>Projects
+</a><a href=/categories/machine-learning/>Machine Learning</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/heart-disease-prediction-using-machine-learning/>Heart Disease Prediction Using Machine Learning</a></h2></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Sep 14, 2025</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>13 minute read</time></div></footer></div></header><section class=article-content><meta name=viewport content="width=device-width,initial-scale=1"><h1 id=from-concepts-to-code>From Concepts to Code</h1><p>In my first post I wrote about <em>why</em> I wanted to start documenting my learning journey. This second post puts that idea into practice: it’s a thorough record of the major project I completed as part of the <strong>Ediglobe</strong> online AI/ML internship. The program guided me from Python basics to model-building, and the final assignment asked me to apply those skills to a real-world problem. I chose <strong>Heart Disease Prediction</strong> because it’s both technically interesting and socially important.</p><blockquote><p>This article is meant to be both a narrative of my experience and a practical reference. I include detailed code snippets and explanations so you (or my future self) can reproduce the work or extend it.</p></blockquote><hr><h1 id=project-overview>Project Overview</h1><p><strong>Problem statement :</strong> Given clinical attributes for patients (age, cholesterol, chest pain type, etc.), predict whether they have heart disease.</p><p><strong>Goal:</strong> Build and compare multiple classification models like Logistic Regression, Decision Tree, Random Forest, and a simple Neural Network, evaluate them using standard metrics, and interpret what features are most influential.
+This was an independent project completed remotely during an online internship offered by Ediglobe.</p><p><strong>Dataset used:</strong> The UCI Heart Disease dataset — a widely used tabular dataset in ML education and research that aggregates clinical measurements relevant to Heart Disease risk. Typical fields include age, sex, various ECG/blood-test related measures, chest pain type, maximum heart rate. The <code>target</code> column is binary (0 = no heart disease, 1 = heart disease).</p><hr><h1 id=understanding-the-data>Understanding the Data</h1><p>Before you start modeling, understanding what each column <em>means</em> is crucial. Here’s a compact explanation of the common fields and why they matter:</p><div class=table-wrapper><table><thead><tr><th>Field Name</th><th>Description</th></tr></thead><tbody><tr><td><strong>age</strong></td><td>Patient age in years. Cardiovascular risk generally increases with age.</td></tr><tr><td><strong>sex</strong></td><td>Biological sex; some heart disease patterns differ by sex.</td></tr><tr><td><strong>chest_pain_type</strong></td><td>Type and severity of chest pain; often a strong clinical cue.</td></tr><tr><td><strong>resting_blood_pressure</strong></td><td>High blood pressure is a known cardiovascular risk factor.</td></tr><tr><td><strong>cholestoral</strong></td><td>Elevated cholesterol correlates with atherosclerosis.</td></tr><tr><td><strong>fasting_blood_sugar</strong></td><td>Diabetes/insulin resistance can increase heart risk.</td></tr><tr><td><strong>rest_ecg</strong></td><td>Indicates abnormalities in heart rhythm or structure.</td></tr><tr><td><strong>Max_heart_rate</strong></td><td>Exercise response can be predictive.</td></tr><tr><td><strong>exercise_induced_angina</strong></td><td>Presence/absence of angina during exercise.</td></tr><tr><td><strong>oldpeak</strong></td><td>Exercise-induced ST depression can indicate ischemia.</td></tr><tr><td><strong>slope</strong></td><td>Shape of ST segment rise/fall.</td></tr><tr><td><strong>vessels_colored_by_flourosopy</strong></td><td>More vessels often indicate worse blockage.</td></tr><tr><td><strong>thalassemia</strong></td><td>Represents blood oxygenation anomaly types.</td></tr><tr><td><strong>target</strong></td><td>The target variable for prediction (e.g., presence of heart disease).</td></tr></tbody></table></div><p>Understanding these makes it easier to engineer features later and also to interpret model outputs.</p><hr><h1 id=the-step-by-step-pipeline>The Step-by-Step Pipeline</h1><p>Below I walk through my exact pipeline, explaining why I chose each step. The code is the same as what I ran during the Internship; I have annotated it heavily so you know the motivation.</p><h2 id=1-imports-and-setup>1. Imports and setup</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -317,10 +26,7 @@
 </span><span class=lnt>14
 </span><span class=lnt>15
 </span><span class=lnt>16
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>pandas</span> <span class=k>as</span> <span class=nn>pd</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>pandas</span> <span class=k>as</span> <span class=nn>pd</span>
 </span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
 </span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>matplotlib.pyplot</span> <span class=k>as</span> <span class=nn>plt</span>
 </span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>seaborn</span> <span class=k>as</span> <span class=nn>sns</span>
@@ -336,47 +42,15 @@
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>warnings</span>
 </span></span><span class=line><span class=cl><span class=n>warnings</span><span class=o>.</span><span class=n>filterwarnings</span><span class=p>(</span><span class=s1>&#39;ignore&#39;</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Why these libraries?</strong></p>
-                    <ul>
-                        <li><code>pandas</code> & <code>numpy</code> for data manipulation.</li>
-                        <li><code>matplotlib</code> & <code>seaborn</code> for visualization and EDA.</li>
-                        <li><code>sklearn</code> provides the pipeline primitives, models, and evaluation metrics.</li>
-                    </ul>
-                    <h2 id=2-loading-the-data>2. Loading the data</h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Why these libraries?</strong></p><ul><li><code>pandas</code> & <code>numpy</code> for data manipulation.</li><li><code>matplotlib</code> & <code>seaborn</code> for visualization and EDA.</li><li><code>sklearn</code> provides the pipeline primitives, models, and evaluation metrics.</li></ul><h2 id=2-loading-the-data>2. Loading the data</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Adjust path as needed when you run this locally</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Adjust path as needed when you run this locally</span>
 </span></span><span class=line><span class=cl><span class=n>df</span> <span class=o>=</span> <span class=n>pd</span><span class=o>.</span><span class=n>read_csv</span><span class=p>(</span><span class=s1>&#39;HeartDiseaseTrain-Test.csv&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>df</span><span class=o>.</span><span class=n>shape</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>df</span><span class=o>.</span><span class=n>head</span><span class=p>())</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -404,10 +78,7 @@
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Dataset Shape: (1025, 14)
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Dataset Shape: (1025, 14)
 </span></span><span class=line><span class=cl>   age     sex chest_pain_type  resting_blood_pressure  cholestoral  \
 </span></span><span class=line><span class=cl>0   52    Male  Typical angina                     125          212
 </span></span><span class=line><span class=cl>1   53    Male  Typical angina                     140          203
@@ -435,26 +106,7 @@
 </span></span><span class=line><span class=cl>2  Reversable Defect       0
 </span></span><span class=line><span class=cl>3  Reversable Defect       0
 </span></span><span class=line><span class=cl>4       Fixed Defect       0
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>What to check first:</strong></p>
-                    <ul>
-                        <li>Dataset shape (rows × columns).</li>
-                        <li>Column names and example rows — this helps spot formatting issues early.</li>
-                    </ul>
-                    <h2 id=3-cleaning--preprocessing--principles>3. Cleaning & preprocessing — principles</h2>
-                    <p><strong>Main tasks:</strong> handle missing values, encode categorical variables, and scale
-                        numeric features.</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p><strong>What to check first:</strong></p><ul><li>Dataset shape (rows × columns).</li><li>Column names and example rows — this helps spot formatting issues early.</li></ul><h2 id=3-cleaning--preprocessing--principles>3. Cleaning & preprocessing — principles</h2><p><strong>Main tasks:</strong> handle missing values, encode categorical variables, and scale numeric features.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -476,10 +128,7 @@
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span><span class=lnt>22
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Drop missing rows</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Drop missing rows</span>
 </span></span><span class=line><span class=cl><span class=n>df</span> <span class=o>=</span> <span class=n>df</span><span class=o>.</span><span class=n>dropna</span><span class=p>()</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1># Encode categorical columns found as objects</span>
@@ -501,72 +150,15 @@
 </span></span><span class=line><span class=cl><span class=n>scaler</span> <span class=o>=</span> <span class=n>StandardScaler</span><span class=p>()</span>
 </span></span><span class=line><span class=cl><span class=n>X_train</span> <span class=o>=</span> <span class=n>scaler</span><span class=o>.</span><span class=n>fit_transform</span><span class=p>(</span><span class=n>X_train</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>X_test</span> <span class=o>=</span> <span class=n>scaler</span><span class=o>.</span><span class=n>transform</span><span class=p>(</span><span class=n>X_test</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Why these choices?</strong></p>
-                    <ul>
-                        <li><em>Dropping missing values</em> is the simplest strategy and works if missingness is small.
-                            For production, consider more robust imputation (mean/median, KNN, or model-based imputers).
-                        </li>
-                        <li><em>Label encoding</em> turns categorical labels into numeric codes. If a categorical column
-                            has no ordinal relationship, one-hot encoding may be preferable. LabelEncoder is quick and
-                            fine for many teaching datasets.</li>
-                        <li><em>Stratified split</em> ensures the train and test sets have similar class proportions so
-                            the evaluation isn’t skewed by class imbalance.</li>
-                        <li><em>StandardScaling</em> centers and rescales features to zero mean and unit variance; it
-                            helps models converge and keeps feature magnitudes comparable.</li>
-                    </ul>
-                    <h2 id=4-exploratory-data-analysis-eda>4. Exploratory Data Analysis (EDA)</h2>
-                    <p>EDA helps you build intuition and catch issues.</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Why these choices?</strong></p><ul><li><em>Dropping missing values</em> is the simplest strategy and works if missingness is small. For production, consider more robust imputation (mean/median, KNN, or model-based imputers).</li><li><em>Label encoding</em> turns categorical labels into numeric codes. If a categorical column has no ordinal relationship, one-hot encoding may be preferable. LabelEncoder is quick and fine for many teaching datasets.</li><li><em>Stratified split</em> ensures the train and test sets have similar class proportions so the evaluation isn’t skewed by class imbalance.</li><li><em>StandardScaling</em> centers and rescales features to zero mean and unit variance; it helps models converge and keeps feature magnitudes comparable.</li></ul><h2 id=4-exploratory-data-analysis-eda>4. Exploratory Data Analysis (EDA)</h2><p>EDA helps you build intuition and catch issues.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>figure</span><span class=p>(</span><span class=n>figsize</span><span class=o>=</span><span class=p>(</span><span class=mi>12</span><span class=p>,</span><span class=mi>8</span><span class=p>))</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>figure</span><span class=p>(</span><span class=n>figsize</span><span class=o>=</span><span class=p>(</span><span class=mi>12</span><span class=p>,</span><span class=mi>8</span><span class=p>))</span>
 </span></span><span class=line><span class=cl><span class=n>sns</span><span class=o>.</span><span class=n>heatmap</span><span class=p>(</span><span class=n>df</span><span class=o>.</span><span class=n>corr</span><span class=p>(),</span> <span class=n>annot</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span> <span class=n>cmap</span><span class=o>=</span><span class=s1>&#39;coolwarm&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>title</span><span class=p>(</span><span class=s1>&#39;Feature Correlation Heatmap&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>show</span><span class=p>()</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>What to look for in the heatmap & EDA:</strong></p>
-                    <ul>
-                        <li>Strong correlations between features (may indicate multicollinearity).</li>
-                        <li>Correlations between features and the <code>target</code>. High absolute correlation can be
-                            a signal of predictive value but always verify with domain knowledge.</li>
-                        <li>Class balance (percentage of positive vs negative cases). If the classes are imbalanced,
-                            consider resampling techniques like SMOTE or class-weighted training.</li>
-                    </ul>
-                    <figure><img src=/p/heart-disease-prediction-using-machine-learning/images/heatmap.png>
-                        <figcaption>
-                            <h4>Correlation heatmap of features</h4>
-                        </figcaption>
-                    </figure>
-                    <hr>
-                    <h1 id=modeling--what-i-trained-and-why>Modeling — what I trained and why</h1>
-                    <p>I trained four models to compare simple vs complex approaches. For each model I used the
-                        <code>evaluate_model</code> helper function below.</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p><strong>What to look for in the heatmap & EDA:</strong></p><ul><li>Strong correlations between features (may indicate multicollinearity).</li><li>Correlations between features and the <code>target</code>. High absolute correlation can be a signal of predictive value but always verify with domain knowledge.</li><li>Class balance (percentage of positive vs negative cases). If the classes are imbalanced, consider resampling techniques like SMOTE or class-weighted training.</li></ul><figure><img src=/p/heart-disease-prediction-using-machine-learning/images/heatmap.png><figcaption><h4>Correlation heatmap of features</h4></figcaption></figure><hr><h1 id=modeling--what-i-trained-and-why>Modeling — what I trained and why</h1><p>I trained four models to compare simple vs complex approaches. For each model I used the <code>evaluate_model</code> helper function below.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -576,10 +168,7 @@
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>evaluate_model</span><span class=p>(</span><span class=n>model</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>):</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>evaluate_model</span><span class=p>(</span><span class=n>model</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>):</span>
 </span></span><span class=line><span class=cl>    <span class=n>model</span><span class=o>.</span><span class=n>fit</span><span class=p>(</span><span class=n>X_train</span><span class=p>,</span> <span class=n>y_train</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=n>y_pred</span> <span class=o>=</span> <span class=n>model</span><span class=o>.</span><span class=n>predict</span><span class=p>(</span><span class=n>X_test</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=n>y_proba</span> <span class=o>=</span> <span class=n>model</span><span class=o>.</span><span class=n>predict_proba</span><span class=p>(</span><span class=n>X_test</span><span class=p>)[:,</span> <span class=mi>1</span><span class=p>]</span> <span class=k>if</span> <span class=nb>hasattr</span><span class=p>(</span><span class=n>model</span><span class=p>,</span> <span class=s1>&#39;predict_proba&#39;</span><span class=p>)</span> <span class=k>else</span> <span class=kc>None</span>
@@ -589,38 +178,11 @@
 </span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;Confusion Matrix:</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=n>confusion_matrix</span><span class=p>(</span><span class=n>y_test</span><span class=p>,</span> <span class=n>y_pred</span><span class=p>))</span>
 </span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>y_proba</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
 </span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s2>&#34;ROC-AUC:&#34;</span><span class=p>,</span> <span class=n>roc_auc_score</span><span class=p>(</span><span class=n>y_test</span><span class=p>,</span> <span class=n>y_proba</span><span class=p>))</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <h2 id=1-logistic-regression--baseline-linear-model>1. Logistic Regression — baseline linear model
-                    </h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><h2 id=1-logistic-regression--baseline-linear-model>1. Logistic Regression — baseline linear model</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>log_reg</span> <span class=o>=</span> <span class=n>LogisticRegression</span><span class=p>(</span><span class=n>max_iter</span><span class=o>=</span><span class=mi>1000</span><span class=p>)</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>log_reg</span> <span class=o>=</span> <span class=n>LogisticRegression</span><span class=p>(</span><span class=n>max_iter</span><span class=o>=</span><span class=mi>1000</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>evaluate_model</span><span class=p>(</span><span class=n>log_reg</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -637,10 +199,7 @@
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl> Logistic Regression
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl> Logistic Regression
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>Accuracy: 0.8439024390243902
 </span></span><span class=line><span class=cl>Classification Report:
@@ -657,40 +216,11 @@
 </span></span><span class=line><span class=cl> [[80 20]
 </span></span><span class=line><span class=cl> [12 93]]
 </span></span><span class=line><span class=cl>ROC-AUC: 0.932
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Notes:</strong> Logistic Regression is a great baseline because it’s interpretable and
-                        fast. I increased <code>max_iter</code> to 1000 to ensure convergence on scaled data.</p>
-                    <h2 id=2-decision-tree--simple-interpretable-nonlinear-model>2. Decision Tree — simple,
-                        interpretable nonlinear model</h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Notes:</strong> Logistic Regression is a great baseline because it’s interpretable and fast. I increased <code>max_iter</code> to 1000 to ensure convergence on scaled data.</p><h2 id=2-decision-tree--simple-interpretable-nonlinear-model>2. Decision Tree — simple, interpretable nonlinear model</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>dt</span> <span class=o>=</span> <span class=n>DecisionTreeClassifier</span><span class=p>(</span><span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>)</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>dt</span> <span class=o>=</span> <span class=n>DecisionTreeClassifier</span><span class=p>(</span><span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>evaluate_model</span><span class=p>(</span><span class=n>dt</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -708,10 +238,7 @@
 </span><span class=lnt>16
 </span><span class=lnt>17
 </span><span class=lnt>18
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>
 </span></span><span class=line><span class=cl> Decision Tree
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>Accuracy: 0.9853658536585366
@@ -729,39 +256,11 @@
 </span></span><span class=line><span class=cl> [[100   0]
 </span></span><span class=line><span class=cl> [  3 102]]
 </span></span><span class=line><span class=cl>ROC-AUC: 0.9857142857142858
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Notes:</strong> Decision trees can capture nonlinear interactions but overfit easily —
-                        pruning or limiting depth is often necessary.</p>
-                    <h2 id=3-random-forest--ensemble-of-trees>3. Random Forest — ensemble of trees</h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Notes:</strong> Decision trees can capture nonlinear interactions but overfit easily — pruning or limiting depth is often necessary.</p><h2 id=3-random-forest--ensemble-of-trees>3. Random Forest — ensemble of trees</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>rf</span> <span class=o>=</span> <span class=n>RandomForestClassifier</span><span class=p>(</span><span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>,</span> <span class=n>n_estimators</span><span class=o>=</span><span class=mi>100</span><span class=p>)</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>rf</span> <span class=o>=</span> <span class=n>RandomForestClassifier</span><span class=p>(</span><span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>,</span> <span class=n>n_estimators</span><span class=o>=</span><span class=mi>100</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>evaluate_model</span><span class=p>(</span><span class=n>rf</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -778,10 +277,7 @@
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Random Forest
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>Random Forest
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>Accuracy: 1.0
 </span></span><span class=line><span class=cl>Classification Report:
@@ -798,41 +294,11 @@
 </span></span><span class=line><span class=cl> [[100   0]
 </span></span><span class=line><span class=cl> [  0 105]]
 </span></span><span class=line><span class=cl>ROC-AUC: 1.0
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Notes:</strong> Random Forest typically performs well on tabular data. It reduces
-                        variance relative to a single tree and provides <code>feature_importances_</code> for
-                        interpretation.</p>
-                    <h2 id=4-neural-network-mlp--simple-feedforward-net>4. Neural Network (MLP) — simple feedforward net
-                    </h2>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Notes:</strong> Random Forest typically performs well on tabular data. It reduces variance relative to a single tree and provides <code>feature_importances_</code> for interpretation.</p><h2 id=4-neural-network-mlp--simple-feedforward-net>4. Neural Network (MLP) — simple feedforward net</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>mlp</span> <span class=o>=</span> <span class=n>MLPClassifier</span><span class=p>(</span><span class=n>hidden_layer_sizes</span><span class=o>=</span><span class=p>(</span><span class=mi>64</span><span class=p>,</span> <span class=mi>32</span><span class=p>),</span> <span class=n>activation</span><span class=o>=</span><span class=s1>&#39;relu&#39;</span><span class=p>,</span> <span class=n>max_iter</span><span class=o>=</span><span class=mi>500</span><span class=p>,</span> <span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>)</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>mlp</span> <span class=o>=</span> <span class=n>MLPClassifier</span><span class=p>(</span><span class=n>hidden_layer_sizes</span><span class=o>=</span><span class=p>(</span><span class=mi>64</span><span class=p>,</span> <span class=mi>32</span><span class=p>),</span> <span class=n>activation</span><span class=o>=</span><span class=s1>&#39;relu&#39;</span><span class=p>,</span> <span class=n>max_iter</span><span class=o>=</span><span class=mi>500</span><span class=p>,</span> <span class=n>random_state</span><span class=o>=</span><span class=mi>42</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>evaluate_model</span><span class=p>(</span><span class=n>mlp</span><span class=p>,</span> <span class=n>X_train</span><span class=p>,</span> <span class=n>X_test</span><span class=p>,</span> <span class=n>y_train</span><span class=p>,</span> <span class=n>y_test</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -849,10 +315,7 @@
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl> Neural Network (MLP)
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl> Neural Network (MLP)
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>Accuracy: 1.0
 </span></span><span class=line><span class=cl>Classification Report:
@@ -869,147 +332,19 @@
 </span></span><span class=line><span class=cl> [[100   0]
 </span></span><span class=line><span class=cl> [  0 105]]
 </span></span><span class=line><span class=cl>ROC-AUC: 1.0
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Notes:</strong> MLPs can capture complex nonlinear patterns but require careful tuning
-                        and more compute. The architecture <code>(64, 32)</code> is a modest starting point for this
-                        dataset size.</p>
-                    <hr>
-                    <h1 id=interpreting-results-how-to-read-model-output>Interpreting Results (How to read model output)
-                    </h1>
-                    <p>When you run <code>evaluate_model</code>, you’ll see several outputs. Here’s how to interpret
-                        them:</p>
-                    <ul>
-                        <li>
-                            <p><strong>Accuracy</strong> — the fraction of correct predictions. Useful for balanced
-                                datasets, but can be misleading if classes are imbalanced.</p>
-                        </li>
-                        <li>
-                            <p><strong>Classification report</strong> — shows precision, recall, and F1-score for each
-                                class. These metrics are especially important when false positives and false negatives
-                                have different costs.</p>
-                            <ul>
-                                <li><em>Precision</em> answers: of instances predicted positive, how many were truly
-                                    positive?</li>
-                                <li><em>Recall</em> (sensitivity) answers: of truly positive instances, how many did we
-                                    correctly identify?</li>
-                                <li><em>F1-score</em> is the harmonic mean of precision and recall; useful when you want
-                                    a single summary metric that balances them.</li>
-                            </ul>
-                        </li>
-                        <li>
-                            <p><strong>Confusion matrix</strong> — 2×2 matrix showing true negatives (TN), false
-                                positives (FP), false negatives (FN), and true positives (TP). For medical screening
-                                tasks, FN (missed positive cases) are usually more serious than FP.</p>
-                        </li>
-                        <li>
-                            <p><strong>ROC-AUC</strong> — area under the receiver operating characteristic curve;
-                                measures ranking quality of predicted probabilities. AUC is threshold-agnostic and
-                                useful as a general discriminative metric.</p>
-                        </li>
-                    </ul>
-                    <p><strong>Model comparison tip:</strong> Use a mix of metrics (AUC, F1, confusion matrix) rather
-                        than a single one. Also consider clinical priorities: is it more critical to reduce false
-                        negatives (catch every sick patient) or false positives (avoid unnecessary follow-ups)?</p>
-                    <h2 id=model-performance-summary>Model Performance Summary</h2>
-                    <p>Here’s a quick side-by-side view of the models I trained:</p>
-                    <div class=table-wrapper>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Model</th>
-                                    <th>Accuracy</th>
-                                    <th>ROC-AUC</th>
-                                    <th>F1-score</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Logistic Regression</td>
-                                    <td>0.84</td>
-                                    <td>0.93</td>
-                                    <td>0.84</td>
-                                </tr>
-                                <tr>
-                                    <td>Decision Tree</td>
-                                    <td>0.99</td>
-                                    <td>0.99</td>
-                                    <td>0.99</td>
-                                </tr>
-                                <tr>
-                                    <td>Random Forest</td>
-                                    <td>1.00</td>
-                                    <td>1.00</td>
-                                    <td>1.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Neural Net (MLP)</td>
-                                    <td>1.00</td>
-                                    <td>1.00</td>
-                                    <td>1.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p>From this, you can see that both Random Forest and the Neural Net achieved perfect scores on this
-                        dataset. Logistic Regression provided a strong but simpler baseline, while the Decision Tree
-                        nearly matched the ensembles.</p>
-                    <blockquote>
-                        <p>The near-perfect scores from the Decision Tree, Random Forest, and MLP suggest overfitting on
-                            this dataset. In real-world scenarios, results would likely be less extreme, and
-                            cross-validation or regularization would be necessary.</p>
-                    </blockquote>
-                    <hr>
-                    <h1 id=feature-importance--model-explainability>Feature Importance & Model Explainability</h1>
-                    <p>Random Forest provides a quick look at which features contributed most to its decisions via
-                        <code>feature_importances_</code>.</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Notes:</strong> MLPs can capture complex nonlinear patterns but require careful tuning and more compute. The architecture <code>(64, 32)</code> is a modest starting point for this dataset size.</p><hr><h1 id=interpreting-results-how-to-read-model-output>Interpreting Results (How to read model output)</h1><p>When you run <code>evaluate_model</code>, you’ll see several outputs. Here’s how to interpret them:</p><ul><li><p><strong>Accuracy</strong> — the fraction of correct predictions. Useful for balanced datasets, but can be misleading if classes are imbalanced.</p></li><li><p><strong>Classification report</strong> — shows precision, recall, and F1-score for each class. These metrics are especially important when false positives and false negatives have different costs.</p><ul><li><em>Precision</em> answers: of instances predicted positive, how many were truly positive?</li><li><em>Recall</em> (sensitivity) answers: of truly positive instances, how many did we correctly identify?</li><li><em>F1-score</em> is the harmonic mean of precision and recall; useful when you want a single summary metric that balances them.</li></ul></li><li><p><strong>Confusion matrix</strong> — 2×2 matrix showing true negatives (TN), false positives (FP), false negatives (FN), and true positives (TP). For medical screening tasks, FN (missed positive cases) are usually more serious than FP.</p></li><li><p><strong>ROC-AUC</strong> — area under the receiver operating characteristic curve; measures ranking quality of predicted probabilities. AUC is threshold-agnostic and useful as a general discriminative metric.</p></li></ul><p><strong>Model comparison tip:</strong> Use a mix of metrics (AUC, F1, confusion matrix) rather than a single one. Also consider clinical priorities: is it more critical to reduce false negatives (catch every sick patient) or false positives (avoid unnecessary follow-ups)?</p><h2 id=model-performance-summary>Model Performance Summary</h2><p>Here’s a quick side-by-side view of the models I trained:</p><div class=table-wrapper><table><thead><tr><th>Model</th><th>Accuracy</th><th>ROC-AUC</th><th>F1-score</th></tr></thead><tbody><tr><td>Logistic Regression</td><td>0.84</td><td>0.93</td><td>0.84</td></tr><tr><td>Decision Tree</td><td>0.99</td><td>0.99</td><td>0.99</td></tr><tr><td>Random Forest</td><td>1.00</td><td>1.00</td><td>1.00</td></tr><tr><td>Neural Net (MLP)</td><td>1.00</td><td>1.00</td><td>1.00</td></tr></tbody></table></div><p>From this, you can see that both Random Forest and the Neural Net achieved perfect scores on this dataset. Logistic Regression provided a strong but simpler baseline, while the Decision Tree nearly matched the ensembles.</p><blockquote><p>The near-perfect scores from the Decision Tree, Random Forest, and MLP suggest overfitting on this dataset. In real-world scenarios, results would likely be less extreme, and cross-validation or regularization would be necessary.</p></blockquote><hr><h1 id=feature-importance--model-explainability>Feature Importance & Model Explainability</h1><p>Random Forest provides a quick look at which features contributed most to its decisions via <code>feature_importances_</code>.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>importances</span> <span class=o>=</span> <span class=n>rf</span><span class=o>.</span><span class=n>feature_importances_</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>importances</span> <span class=o>=</span> <span class=n>rf</span><span class=o>.</span><span class=n>feature_importances_</span>
 </span></span><span class=line><span class=cl><span class=n>features</span> <span class=o>=</span> <span class=n>X</span><span class=o>.</span><span class=n>columns</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>figure</span><span class=p>(</span><span class=n>figsize</span><span class=o>=</span><span class=p>(</span><span class=mi>10</span><span class=p>,</span> <span class=mi>8</span><span class=p>))</span>
 </span></span><span class=line><span class=cl><span class=n>sns</span><span class=o>.</span><span class=n>barplot</span><span class=p>(</span><span class=n>x</span><span class=o>=</span><span class=n>importances</span><span class=p>,</span> <span class=n>y</span><span class=o>=</span><span class=n>features</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>title</span><span class=p>(</span><span class=s1>&#39;Feature Importance - Random Forest&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>show</span><span class=p>()</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Important:</strong> feature importance from tree ensembles is a helpful heuristic but not
-                        a causal statement. For more robust explainability on per-prediction level, consider tools like
-                        <strong>SHAP</strong> or <strong>LIME</strong> in future work.</p>
-                    <figure><img src=/p/heart-disease-prediction-using-machine-learning/images/featureImportance.png>
-                        <figcaption>
-                            <h4>Random Forest feature importance</h4>
-                        </figcaption>
-                    </figure>
-                    <hr>
-                    <h1 id=roc-curves--visual-comparison>ROC Curves — visual comparison</h1>
-                    <p>Plotting ROC curves for all models helps compare their ranking performance at a glance.</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Important:</strong> feature importance from tree ensembles is a helpful heuristic but not a causal statement. For more robust explainability on per-prediction level, consider tools like <strong>SHAP</strong> or <strong>LIME</strong> in future work.</p><figure><img src=/p/heart-disease-prediction-using-machine-learning/images/featureImportance.png><figcaption><h4>Random Forest feature importance</h4></figcaption></figure><hr><h1 id=roc-curves--visual-comparison>ROC Curves — visual comparison</h1><p>Plotting ROC curves for all models helps compare their ranking performance at a glance.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -1025,10 +360,7 @@
 </span><span class=lnt>14
 </span><span class=lnt>15
 </span><span class=lnt>16
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>models</span> <span class=o>=</span> <span class=p>{</span> <span class=s1>&#39;LogReg&#39;</span><span class=p>:</span> <span class=n>log_reg</span><span class=p>,</span> <span class=s1>&#39;DecisionTree&#39;</span><span class=p>:</span> <span class=n>dt</span><span class=p>,</span> <span class=s1>&#39;RandomForest&#39;</span><span class=p>:</span> <span class=n>rf</span><span class=p>,</span> <span class=s1>&#39;NeuralNet&#39;</span><span class=p>:</span> <span class=n>mlp</span> <span class=p>}</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>models</span> <span class=o>=</span> <span class=p>{</span> <span class=s1>&#39;LogReg&#39;</span><span class=p>:</span> <span class=n>log_reg</span><span class=p>,</span> <span class=s1>&#39;DecisionTree&#39;</span><span class=p>:</span> <span class=n>dt</span><span class=p>,</span> <span class=s1>&#39;RandomForest&#39;</span><span class=p>:</span> <span class=n>rf</span><span class=p>,</span> <span class=s1>&#39;NeuralNet&#39;</span><span class=p>:</span> <span class=n>mlp</span> <span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>figure</span><span class=p>(</span><span class=n>figsize</span><span class=o>=</span><span class=p>(</span><span class=mi>8</span><span class=p>,</span><span class=mi>6</span><span class=p>))</span>
 </span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>name</span><span class=p>,</span> <span class=n>model</span> <span class=ow>in</span> <span class=n>models</span><span class=o>.</span><span class=n>items</span><span class=p>():</span>
@@ -1044,33 +376,7 @@
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>title</span><span class=p>(</span><span class=s1>&#39;ROC Curves&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>legend</span><span class=p>()</span>
 </span></span><span class=line><span class=cl><span class=n>plt</span><span class=o>.</span><span class=n>show</span><span class=p>()</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <figure><img src=/p/heart-disease-prediction-using-machine-learning/images/rocCurve.png>
-                        <figcaption>
-                            <h4>ROC curves for all models</h4>
-                        </figcaption>
-                    </figure>
-                    <hr>
-                    <h1 id=hyperparameter-tuning--validation>Hyperparameter Tuning & Validation</h1>
-                    <p>During an extended experiment, you’d normally:</p>
-                    <ul>
-                        <li>Use <code>GridSearchCV</code> or <code>RandomizedSearchCV</code> with cross-validation to
-                            tune hyperparameters (e.g., <code>n_estimators</code>, <code>max_depth</code> for
-                            RandomForest).</li>
-                        <li>Use <code>cross_val_score</code> to get robust performance estimates.</li>
-                    </ul>
-                    <p>Example snippet for a Random Forest grid search:</p>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></code></pre></td></tr></table></div></div><figure><img src=/p/heart-disease-prediction-using-machine-learning/images/rocCurve.png><figcaption><h4>ROC curves for all models</h4></figcaption></figure><hr><h1 id=hyperparameter-tuning--validation>Hyperparameter Tuning & Validation</h1><p>During an extended experiment, you’d normally:</p><ul><li>Use <code>GridSearchCV</code> or <code>RandomizedSearchCV</code> with cross-validation to tune hyperparameters (e.g., <code>n_estimators</code>, <code>max_depth</code> for RandomForest).</li><li>Use <code>cross_val_score</code> to get robust performance estimates.</li></ul><p>Example snippet for a Random Forest grid search:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -1080,10 +386,7 @@
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>param_grid</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>param_grid</span> <span class=o>=</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=s1>&#39;n_estimators&#39;</span><span class=p>:</span> <span class=p>[</span><span class=mi>50</span><span class=p>,</span> <span class=mi>100</span><span class=p>,</span> <span class=mi>200</span><span class=p>],</span>
 </span></span><span class=line><span class=cl>    <span class=s1>&#39;max_depth&#39;</span><span class=p>:</span> <span class=p>[</span><span class=kc>None</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>10</span><span class=p>],</span>
 </span></span><span class=line><span class=cl>    <span class=s1>&#39;min_samples_split&#39;</span><span class=p>:</span> <span class=p>[</span><span class=mi>2</span><span class=p>,</span> <span class=mi>5</span><span class=p>]</span>
@@ -1093,192 +396,20 @@
 </span></span><span class=line><span class=cl><span class=n>gs</span><span class=o>.</span><span class=n>fit</span><span class=p>(</span><span class=n>X_train</span><span class=p>,</span> <span class=n>y_train</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Best params:&#39;</span><span class=p>,</span> <span class=n>gs</span><span class=o>.</span><span class=n>best_params_</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Best CV AUC:&#39;</span><span class=p>,</span> <span class=n>gs</span><span class=o>.</span><span class=n>best_score_</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <p><strong>Why CV?</strong> Cross-validation reduces variance in your performance estimate due to a
-                        single train/test split.</p>
-                    <hr>
-                    <h1 id=deployment-notes>Deployment Notes</h1>
-                    <p>If you want to share your model with others, a few practical steps:</p>
-                    <ol>
-                        <li>Train on the full training set and save the final scaler + model using <code>joblib</code>
-                            or <code>pickle</code>.</li>
-                    </ol>
-                    <div class=highlight>
-                        <div class=chroma>
-                            <table class=lntable>
-                                <tr>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></code></pre></td></tr></table></div></div><p><strong>Why CV?</strong> Cross-validation reduces variance in your performance estimate due to a single train/test split.</p><hr><h1 id=deployment-notes>Deployment Notes</h1><p>If you want to share your model with others, a few practical steps:</p><ol><li>Train on the full training set and save the final scaler + model using <code>joblib</code> or <code>pickle</code>.</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre>
-                                    </td>
-                                    <td class=lntd>
-                                        <pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>joblib</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>joblib</span>
 </span></span><span class=line><span class=cl><span class=n>joblib</span><span class=o>.</span><span class=n>dump</span><span class=p>(</span><span class=n>scaler</span><span class=p>,</span> <span class=s1>&#39;scaler.joblib&#39;</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=n>joblib</span><span class=o>.</span><span class=n>dump</span><span class=p>(</span><span class=n>rf</span><span class=p>,</span> <span class=s1>&#39;random_forest.joblib&#39;</span><span class=p>)</span>
-</span></span></code></pre>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    <ol start=2>
-                        <li>Build a small web app (Streamlit / Flask) that loads the scaler and model, accepts user
-                            input, and returns predictions.</li>
-                        <li>Add input validation, human-in-the-loop checks, and clear disclaimers that the tool is for
-                            educational/pre-screening purposes only.</li>
-                    </ol>
-                    <hr>
-                    <h1 id=ethics-limitations--medical-caution>Ethics, Limitations & Medical Caution</h1>
-                    <p>This is <em>not</em> a clinical product. A few important caveats:</p>
-                    <ul>
-                        <li><strong>Data limitations:</strong> Public datasets may not represent every population
-                            subgroup. Models trained on them can be biased.</li>
-                        <li><strong>Clinical validation:</strong> Any model used in healthcare needs rigorous validation
-                            and regulatory approval before being used for diagnosis.</li>
-                        <li><strong>Privacy & consent:</strong> Patient data must be handled according to legal and
-                            ethical standards.</li>
-                        <li><strong>False negatives matter:</strong> In a medical screening context, missing positive
-                            cases (false negatives) can have dire consequences — model thresholds and operating points
-                            must be chosen with clinical stakeholders.</li>
-                    </ul>
-                    <hr>
-                    <h1 id=challenges-i-faced--what-i-learned>Challenges I Faced & What I Learned</h1>
-                    <p>Even though this was a solo internship project, I encountered the kinds of problems many
-                        beginners face. Here are a few concrete, realistic experiences and the lessons I took away:</p>
-                    <ul>
-                        <li>
-                            <p><strong>Technical skills gained:</strong> data cleaning, encoding/scaling, model training
-                                across algorithms, interpreting confusion matrices and ROC curves, and saving models for
-                                deployment.</p>
-                        </li>
-                        <li>
-                            <p><strong>Non-technical skills:</strong> documenting each step as I went (which is why I’m
-                                writing this!) helped me reproduce experiments reliably. Time management and debugging
-                                patience were also big wins.</p>
-                        </li>
-                    </ul>
-                    <hr>
-                    <h1 id=impact--outcomes>Impact & Outcomes</h1>
-                    <p>I presented my results to my teacher after completing the project. He encouraged me to continue
-                        with more projects in ML, which boosted my confidence and gave me a clear sense of progression.
-                        This was valuable validation that the skills I was building could be applied to meaningful
-                        problems.</p>
-                    <p>More broadly, the project reinforced an important idea: <strong>ML can be a practical tool for
-                            healthcare pre-screening</strong>, not as a replacement for clinicians but as a way to
-                        prioritize resources and identify patients who may need further testing.</p>
-                    <hr>
-                    <h1 id=practical-tips--next-improvements>Practical Tips & Next Improvements</h1>
-                    <ul>
-                        <li>Try K-fold cross-validation instead of a single train/test split.</li>
-                        <li>Use GridSearchCV / RandomizedSearchCV to tune hyperparameters.</li>
-                        <li>Explore feature engineering (polynomial features, interaction terms).</li>
-                        <li>Address class imbalance with oversampling (SMOTE) or by setting class weights.</li>
-                        <li>Add model explainability with SHAP to get per-prediction explanations.</li>
-                        <li>Consider calibration of predicted probabilities (Platt scaling / isotonic regression).</li>
-                    </ul>
-                    <hr>
-                    <h1 id=conclusion--why-this-mattered-to-me>Conclusion — Why this mattered to me</h1>
-                    <p>This project was a bridge between learning and doing. It proved I could take course concepts and
-                        apply them end-to-end: from raw data to an evaluated model and interpretable outputs. That
-                        tangible progress — plus the encouragement I received from my teacher — convinced me that
-                        continued practice and documentation (like this blog) will pay off. Looking back at my very
-                        first post about documenting my work, I now see the value: without writing this article, I
-                        would’ve forgotten half the lessons I learned during this project.</p>
-                    <p>If you’re following along with my blog, thanks for reading. If you try to reproduce this project,
-                        I’d love to hear how it goes — and once I upload the code and figures into my GitHub repo, I’ll
-                        link them here for reproducibility.</p>
-                </section>
-                <footer class=article-footer>
-                    <section class=article-tags><a href=/tags/machine-learning />Machine Learning</a>
-                        <a href=/tags/healthcare />Healthcare</a>
-                        <a href=/tags/heart-disease />Heart Disease</a>
-                        <a href=/tags/internship-project />Internship Project</a>
-                    </section>
-                    <section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" />
-                            <circle cx="12" cy="12" r="9" />
-                            <path d="M14.5 9a3.5 4 0 100 6" />
-                        </svg>
-                        <span>Licensed under CC BY-NC-SA 4.0</span>
-                    </section>
-                </footer>
-            </article>
-            <div class=disqus-container>
-                <div id=disqus_thread></div>
-                <script>window.disqus_config = function () { }, function () { if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) { document.getElementById("disqus_thread").innerHTML = "Disqus comments not available by default when the website is previewed locally."; return } var t = document, e = t.createElement("script"); e.async = !0, e.src = "//hugo-theme-stack.disqus.com/embed.js", e.setAttribute("data-timestamp", +new Date), (t.head || t.body).appendChild(e) }()</script>
-                <noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered
-                        by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span
-                        class=logo-disqus>Disqus</span></a>
-            </div>
-            <style>
-                .disqus-container {
-                    background-color: var(--card-background);
-                    border-radius: var(--card-border-radius);
-                    box-shadow: var(--shadow-l1);
-                    padding: var(--card-padding)
-                }
-            </style>
-            <script>window.addEventListener("onColorSchemeChange", e => { typeof DISQUS == "object" && DISQUS.reset({ reload: !0 }) })</script>
-           
-            <div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-                <div class=pswp__bg></div>
-                <div class=pswp__scroll-wrap>
-                    <div class=pswp__container>
-                        <div class=pswp__item></div>
-                        <div class=pswp__item></div>
-                        <div class=pswp__item></div>
-                    </div>
-                    <div class="pswp__ui pswp__ui--hidden">
-                        <div class=pswp__top-bar>
-                            <div class=pswp__counter></div><button class="pswp__button pswp__button--close"
-                                title="Close (Esc)"></button>
-                            <button class="pswp__button pswp__button--share" title=Share></button>
-                            <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-                            <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-                            <div class=pswp__preloader>
-                                <div class=pswp__preloader__icn>
-                                    <div class=pswp__preloader__cut>
-                                        <div class=pswp__preloader__donut></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-                            <div class=pswp__share-tooltip></div>
-                        </div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-                        </button>
-                        <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
-                        <div class=pswp__caption>
-                            <div class=pswp__caption__center></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js
-                integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script>
-            <script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js
-                integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script>
-            <link rel=stylesheet
-                href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css
-                crossorigin=anonymous>
-            <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css
-                crossorigin=anonymous>
-        </main>
-    </div>
-    <script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js
-        integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script>
-    <script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js
-        defer></script>
-    <script>(function () { const e = document.createElement("link"); e.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap", e.type = "text/css", e.rel = "stylesheet", document.head.appendChild(e) })()</script>
-</body>
-
-</html>
+</span></span></code></pre></td></tr></table></div></div><ol start=2><li>Build a small web app (Streamlit / Flask) that loads the scaler and model, accepts user input, and returns predictions.</li><li>Add input validation, human-in-the-loop checks, and clear disclaimers that the tool is for educational/pre-screening purposes only.</li></ol><hr><h1 id=ethics-limitations--medical-caution>Ethics, Limitations & Medical Caution</h1><p>This is <em>not</em> a clinical product. A few important caveats:</p><ul><li><strong>Data limitations:</strong> Public datasets may not represent every population subgroup. Models trained on them can be biased.</li><li><strong>Clinical validation:</strong> Any model used in healthcare needs rigorous validation and regulatory approval before being used for diagnosis.</li><li><strong>Privacy & consent:</strong> Patient data must be handled according to legal and ethical standards.</li><li><strong>False negatives matter:</strong> In a medical screening context, missing positive cases (false negatives) can have dire consequences — model thresholds and operating points must be chosen with clinical stakeholders.</li></ul><hr><h1 id=challenges-i-faced--what-i-learned>Challenges I Faced & What I Learned</h1><p>Even though this was a solo internship project, I encountered the kinds of problems many beginners face. Here are a few concrete, realistic experiences and the lessons I took away:</p><ul><li><p><strong>Technical skills gained:</strong> data cleaning, encoding/scaling, model training across algorithms, interpreting confusion matrices and ROC curves, and saving models for deployment.</p></li><li><p><strong>Non-technical skills:</strong> documenting each step as I went (which is why I’m writing this!) helped me reproduce experiments reliably. Time management and debugging patience were also big wins.</p></li></ul><hr><h1 id=impact--outcomes>Impact & Outcomes</h1><p>I presented my results to my teacher after completing the project. He encouraged me to continue with more projects in ML, which boosted my confidence and gave me a clear sense of progression. This was valuable validation that the skills I was building could be applied to meaningful problems.</p><p>More broadly, the project reinforced an important idea: <strong>ML can be a practical tool for healthcare pre-screening</strong>, not as a replacement for clinicians but as a way to prioritize resources and identify patients who may need further testing.</p><hr><h1 id=practical-tips--next-improvements>Practical Tips & Next Improvements</h1><ul><li>Try K-fold cross-validation instead of a single train/test split.</li><li>Use GridSearchCV / RandomizedSearchCV to tune hyperparameters.</li><li>Explore feature engineering (polynomial features, interaction terms).</li><li>Address class imbalance with oversampling (SMOTE) or by setting class weights.</li><li>Add model explainability with SHAP to get per-prediction explanations.</li><li>Consider calibration of predicted probabilities (Platt scaling / isotonic regression).</li></ul><hr><h1 id=conclusion--why-this-mattered-to-me>Conclusion — Why this mattered to me</h1><p>This project was a bridge between learning and doing. It proved I could take course concepts and apply them end-to-end: from raw data to an evaluated model and interpretable outputs. That tangible progress — plus the encouragement I received from my teacher — convinced me that continued practice and documentation (like this blog) will pay off. Looking back at my very first post about documenting my work, I now see the value: without writing this article, I would’ve forgotten half the lessons I learned during this project.</p><p>If you’re following along with my blog, thanks for reading. If you try to reproduce this project, I’d love to hear how it goes — and once I upload the code and figures into my GitHub repo, I’ll link them here for reproducibility.</p></section><footer class=article-footer><section class=article-tags><a href=/tags/machine-learning/>Machine Learning</a>
+<a href=/tags/healthcare/>Healthcare</a>
+<a href=/tags/heart-disease/>Heart Disease</a>
+<a href=/tags/internship-project/>Internship Project</a></section></footer></article><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2025 Hadobot Blog</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>Theme <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.31.0>Stack</a></b> designed by <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
