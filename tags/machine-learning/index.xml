@@ -2,7 +2,8 @@
 &lt;h1 id="from-concepts-to-code"&gt;From Concepts to Code
 &lt;/h1&gt;&lt;p&gt;In my first post I wrote about &lt;em&gt;why&lt;/em&gt; I wanted to start documenting my learning journey. This second post puts that idea into practice: it’s a thorough record of the major project I completed as part of the &lt;strong&gt;Ediglobe&lt;/strong&gt; online AI/ML internship. The program guided me from Python basics to model-building, and the final assignment asked me to apply those skills to a real-world problem. I chose &lt;strong&gt;Heart Disease Prediction&lt;/strong&gt; because it’s both technically interesting and socially important.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;This article is meant to be both a narrative of my experience and a practical reference. I include detailed code snippets and explanations so you (or my future self) can reproduce the work or extend it.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;This article is meant to be both a narrative of my experience and a practical reference. I include detailed code snippets and explanations so you (or my future self) can reproduce the work or extend it.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;h1 id="project-overview"&gt;Project Overview
 &lt;/h1&gt;&lt;p&gt;&lt;strong&gt;Problem statement :&lt;/strong&gt; Given clinical attributes for patients (age, cholesterol, chest pain type, etc.), predict whether they have heart disease.&lt;/p&gt;
@@ -596,7 +597,8 @@ This was an independent project completed remotely during an online internship o
 &lt;/table&gt;
 &lt;p&gt;From this, you can see that both Random Forest and the Neural Net achieved perfect scores on this dataset. Logistic Regression provided a strong but simpler baseline, while the Decision Tree nearly matched the ensembles.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;The near-perfect scores from the Decision Tree, Random Forest, and MLP suggest overfitting on this dataset. In real-world scenarios, results would likely be less extreme, and cross-validation or regularization would be necessary.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;The near-perfect scores from the Decision Tree, Random Forest, and MLP suggest overfitting on this dataset. In real-world scenarios, results would likely be less extreme, and cross-validation or regularization would be necessary.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;h1 id="feature-importance--model-explainability"&gt;Feature Importance &amp;amp; Model Explainability
 &lt;/h1&gt;&lt;p&gt;Random Forest provides a quick look at which features contributed most to its decisions via &lt;code&gt;feature_importances_&lt;/code&gt;.&lt;/p&gt;
