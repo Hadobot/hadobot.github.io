@@ -1,4 +1,242 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hadobot Blog</title><link>https://hadobot.github.io/</link><description>Recent content on Hadobot Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 02 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://hadobot.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Fun Arduino Project</title><link>https://hadobot.github.io/p/fun-arduino-project/</link><pubDate>Thu, 02 Oct 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/fun-arduino-project/</guid><description>&lt;h2 id="introduction-to-morse-code-communication"&gt;Introduction to Morse Code Communication
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hadobot Blog</title><link>https://hadobot.github.io/</link><description>Recent content on Hadobot Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 03 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://hadobot.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Unlocking Higher Display Resolutions on Wayland: A Step-by-Step Guide</title><link>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</link><pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</guid><description>&lt;p&gt;If you’ve followed the previous article on using &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; to unlock higher resolutions on Xorg-based systems, you might have wondered: &lt;em&gt;what about Wayland?&lt;/em&gt;
+Wayland, the modern display server protocol replacing Xorg on most Linux distributions, handles displays quite differently. It’s faster, more secure, and avoids some legacy issues — but also removes tools like &lt;code&gt;xrandr&lt;/code&gt;, which means custom resolutions require a different approach.&lt;/p&gt;
+&lt;p&gt;In this guide, we’ll explore how to achieve higher or custom resolutions on &lt;strong&gt;Wayland-based systems&lt;/strong&gt; using kernel parameters and EDID overrides. By the end, you’ll be able to force a resolution like &lt;strong&gt;1920x1080&lt;/strong&gt; even when your laptop or monitor doesn’t advertise it.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-1-check-whether-youre-running-wayland-or-xorg"&gt;Step 1: Check Whether You’re Running Wayland or Xorg
+&lt;/h2&gt;&lt;p&gt;Before doing anything else, verify that your current session uses Wayland:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$XDG_SESSION_TYPE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;If the output is &lt;code&gt;wayland&lt;/code&gt;, continue with this guide.
+If it says &lt;code&gt;x11&lt;/code&gt;, your system is running Xorg, and you can follow the previous &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; method instead.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-2-understand-the-difference-between-wayland-and-xorg"&gt;Step 2: Understand the Difference Between Wayland and Xorg
+&lt;/h2&gt;&lt;p&gt;Under &lt;strong&gt;Xorg&lt;/strong&gt;, users could freely add or remove display modes using &lt;code&gt;xrandr&lt;/code&gt;.
+Wayland, however, delegates resolution management to the &lt;strong&gt;compositor&lt;/strong&gt; (e.g., GNOME Shell, KDE Plasma, Sway). This design increases stability but means you &lt;strong&gt;cannot directly inject custom resolutions&lt;/strong&gt; at runtime.&lt;/p&gt;
+&lt;p&gt;Instead, you must:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Instruct the &lt;strong&gt;kernel&lt;/strong&gt; to pretend the display supports your desired resolution, or&lt;/li&gt;
+&lt;li&gt;Provide a &lt;strong&gt;custom EDID&lt;/strong&gt; (Extended Display Identification Data) file that includes your desired mode.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id="step-3-determine-your-display-output-name"&gt;Step 3: Determine Your Display Output Name
+&lt;/h2&gt;&lt;p&gt;Each display output is represented under &lt;code&gt;/sys/class/drm&lt;/code&gt;. To find your active display:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls /sys/class/drm/*/status
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Then check which outputs are marked as &lt;code&gt;connected&lt;/code&gt;. For example, you might see:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;/sys/class/drm/card0-eDP-1/status: connected
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;In this case, your output name is &lt;strong&gt;eDP-1&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-4-force-a-resolution-using-a-kernel-parameter"&gt;Step 4: Force a Resolution Using a Kernel Parameter
+&lt;/h2&gt;&lt;p&gt;If your monitor supports the new resolution but your system doesn’t expose it, the easiest method is adding a kernel parameter to force it.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Open your boot configuration file (for example, on Ubuntu or Debian):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo nano /etc/default/grub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Find the line that starts with:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;and append your video mode, for example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash video=eDP-1:1920x1080@60&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update GRUB and reboot:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;After rebooting, open your display settings (GNOME Settings → Displays or KDE System Settings → Display &amp;amp; Monitor) and select &lt;strong&gt;1920x1080&lt;/strong&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-5-using-a-custom-edid-advanced-method"&gt;Step 5: Using a Custom EDID (Advanced Method)
+&lt;/h2&gt;&lt;p&gt;If the kernel parameter method fails — often the case with certain laptops or NVIDIA drivers — you can create a &lt;strong&gt;custom EDID file&lt;/strong&gt; to trick the system into recognizing the resolution.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Generate an EDID file using a tool such as &lt;code&gt;edid-decode&lt;/code&gt; or &lt;code&gt;wxEDID&lt;/code&gt;, or start from a known-good one.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Save your custom file under:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo mkdir -p /lib/firmware/edid
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp 1920x1080.bin /lib/firmware/edid/
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Edit your GRUB configuration again and add:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;drm.edid_firmware=eDP-1:edid/1920x1080.bin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update GRUB and rebuild the initramfs (important for persistence):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-initramfs -u
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;After rebooting, check your available resolutions in your compositor’s display settings. The new resolution should now appear.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-6-select-the-new-resolution"&gt;Step 6: Select the New Resolution
+&lt;/h2&gt;&lt;p&gt;Once the kernel or compositor recognizes your forced mode, you can select it:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;GNOME (Wayland):&lt;/strong&gt;
+Open &lt;em&gt;Settings → Displays&lt;/em&gt; and choose the resolution manually.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;KDE Plasma (Wayland):&lt;/strong&gt;
+Use the GUI under &lt;em&gt;System Settings → Display and Monitor&lt;/em&gt;, or use the CLI:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor --outputs
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor output.&amp;lt;ID&amp;gt;.mode.&amp;lt;MODE&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you don’t see your resolution, double-check the boot parameters and verify using:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;dmesg &lt;span class="p"&gt;|&lt;/span&gt; grep -i drm
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;to confirm the kernel applied the EDID or video mode correctly.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-7-persisting-the-configuration"&gt;Step 7: Persisting the Configuration
+&lt;/h2&gt;&lt;p&gt;Unlike Xorg, Wayland doesn’t execute &lt;code&gt;~/.profile&lt;/code&gt; on login for display modes.
+Persistence must come from:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GRUB configuration&lt;/strong&gt; (kernel parameters), or&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;EDID injection&lt;/strong&gt; (firmware-level override).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once configured, your system will boot with the desired resolution every time.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="quick-reference-wayland-edition"&gt;Quick Reference: Wayland Edition
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Check session type&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$XDG_SESSION_TYPE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Identify active outputs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls /sys/class/drm/*/status
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add a forced resolution via GRUB&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo nano /etc/default/grub
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add inside quotes:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash video=eDP-1:1920x1080@60&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# (Optional) Use custom EDID&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo mkdir -p /lib/firmware/edid
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp 1920x1080.bin /lib/firmware/edid/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add in GRUB:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# drm.edid_firmware=eDP-1:edid/1920x1080.bin&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-initramfs -u
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="whats-next"&gt;What’s Next?
+&lt;/h2&gt;&lt;p&gt;You’ve now learned how to unlock custom resolutions on both &lt;strong&gt;Xorg&lt;/strong&gt; and &lt;strong&gt;Wayland&lt;/strong&gt; systems.
+While Wayland requires a bit more setup, these methods ensure your system boots with the exact resolution you want — no matter what display you’re using.&lt;/p&gt;
+&lt;hr&gt;</description></item><item><title>Fun Arduino Project</title><link>https://hadobot.github.io/p/fun-arduino-project/</link><pubDate>Thu, 02 Oct 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/fun-arduino-project/</guid><description>&lt;h2 id="introduction-to-morse-code-communication"&gt;Introduction to Morse Code Communication
 &lt;/h2&gt;&lt;p&gt;The art of communication has undergone a significant transformation over the years. Before the advent of the internet, people relied on various methods to send messages across long distances. One such iconic system that played a crucial role in shaping the course of communication history is &lt;strong&gt;&lt;code&gt;Morse code&lt;/code&gt;&lt;/strong&gt;. This simple yet effective method of communication used a series of dots and dashes to transmit messages across telegraphs and radio waves, revolutionizing the way people connected with each other.&lt;/p&gt;
 &lt;p&gt;Morse code has a rich history, dating back to the early days of telegraphy. Developed by Samuel Morse and his colleagues in the 1830s, it was widely used for decades to transmit messages over wires and radio waves. The code consists of a series of dots (short signals) and dashes (long signals) that correspond to letters, numbers, and other characters. This unique system allowed people to communicate over long distances, facilitating global communication and playing a vital role in shaping modern communication systems.&lt;/p&gt;
 &lt;p&gt;In this article, we&amp;rsquo;ll take a closer look at the basics of Morse code, its history, and its significance in the evolution of communication technology. We&amp;rsquo;ll also explore a simple Arduino project that brings this vintage technology to life using just the built-in LED. By blinking messages in Morse code, we&amp;rsquo;ll demonstrate how this ancient communication method can be reimagined in a modern context, providing a fun and educational experience for electronics enthusiasts and communication buffs alike.&lt;/p&gt;
@@ -1152,245 +1390,7 @@ This was an independent project completed remotely during an online internship o
 &lt;h2 id="looking-ahead"&gt;Looking Ahead
 &lt;/h2&gt;&lt;p&gt;This is just the beginning. I don’t yet know how often I’ll be posting or what the exact mix of topics will look like. What I do know is that I want to commit to the practice of writing. Over time, I believe this habit will not only sharpen my technical skills but also improve how I communicate ideas.&lt;/p&gt;
 &lt;p&gt;If you’ve made it this far, thank you for reading my very first post! This blog is going to be a mix of projects, experiments, and reflections as I move through my engineering journey. If any of that sounds interesting, I’d love for you to follow along. And if you’ve been through a similar experience, I’d be excited to hear your thoughts and advice.&lt;/p&gt;
-&lt;p&gt;Here’s to learning, sharing, and growing — one post at a time.&lt;/p&gt;</description></item><item><title>Unlocking Higher Display Resolutions on Wayland: A Step-by-Step Guide</title><link>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</link><pubDate>Thu, 04 Sep 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</guid><description>&lt;p&gt;If you’ve followed the previous article on using &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; to unlock higher resolutions on Xorg-based systems, you might have wondered: &lt;em&gt;what about Wayland?&lt;/em&gt;
-Wayland, the modern display server protocol replacing Xorg on most Linux distributions, handles displays quite differently. It’s faster, more secure, and avoids some legacy issues — but also removes tools like &lt;code&gt;xrandr&lt;/code&gt;, which means custom resolutions require a different approach.&lt;/p&gt;
-&lt;p&gt;In this guide, we’ll explore how to achieve higher or custom resolutions on &lt;strong&gt;Wayland-based systems&lt;/strong&gt; using kernel parameters and EDID overrides. By the end, you’ll be able to force a resolution like &lt;strong&gt;1920x1080&lt;/strong&gt; even when your laptop or monitor doesn’t advertise it.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-1-check-whether-youre-running-wayland-or-xorg"&gt;Step 1: Check Whether You’re Running Wayland or Xorg
-&lt;/h2&gt;&lt;p&gt;Before doing anything else, verify that your current session uses Wayland:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$XDG_SESSION_TYPE&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;If the output is &lt;code&gt;wayland&lt;/code&gt;, continue with this guide.
-If it says &lt;code&gt;x11&lt;/code&gt;, your system is running Xorg, and you can follow the previous &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; method instead.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-2-understand-the-difference-between-wayland-and-xorg"&gt;Step 2: Understand the Difference Between Wayland and Xorg
-&lt;/h2&gt;&lt;p&gt;Under &lt;strong&gt;Xorg&lt;/strong&gt;, users could freely add or remove display modes using &lt;code&gt;xrandr&lt;/code&gt;.
-Wayland, however, delegates resolution management to the &lt;strong&gt;compositor&lt;/strong&gt; (e.g., GNOME Shell, KDE Plasma, Sway). This design increases stability but means you &lt;strong&gt;cannot directly inject custom resolutions&lt;/strong&gt; at runtime.&lt;/p&gt;
-&lt;p&gt;Instead, you must:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Instruct the &lt;strong&gt;kernel&lt;/strong&gt; to pretend the display supports your desired resolution, or&lt;/li&gt;
-&lt;li&gt;Provide a &lt;strong&gt;custom EDID&lt;/strong&gt; (Extended Display Identification Data) file that includes your desired mode.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;hr&gt;
-&lt;h2 id="step-3-determine-your-display-output-name"&gt;Step 3: Determine Your Display Output Name
-&lt;/h2&gt;&lt;p&gt;Each display output is represented under &lt;code&gt;/sys/class/drm&lt;/code&gt;. To find your active display:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls /sys/class/drm/*/status
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;Then check which outputs are marked as &lt;code&gt;connected&lt;/code&gt;. For example, you might see:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;/sys/class/drm/card0-eDP-1/status: connected
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;In this case, your output name is &lt;strong&gt;eDP-1&lt;/strong&gt;.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-4-force-a-resolution-using-a-kernel-parameter"&gt;Step 4: Force a Resolution Using a Kernel Parameter
-&lt;/h2&gt;&lt;p&gt;If your monitor supports the new resolution but your system doesn’t expose it, the easiest method is adding a kernel parameter to force it.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Open your boot configuration file (for example, on Ubuntu or Debian):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo nano /etc/default/grub
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Find the line that starts with:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash&amp;#34;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;and append your video mode, for example:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash video=eDP-1:1920x1080@60&amp;#34;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Update GRUB and reboot:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;After rebooting, open your display settings (GNOME Settings → Displays or KDE System Settings → Display &amp;amp; Monitor) and select &lt;strong&gt;1920x1080&lt;/strong&gt;.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-5-using-a-custom-edid-advanced-method"&gt;Step 5: Using a Custom EDID (Advanced Method)
-&lt;/h2&gt;&lt;p&gt;If the kernel parameter method fails — often the case with certain laptops or NVIDIA drivers — you can create a &lt;strong&gt;custom EDID file&lt;/strong&gt; to trick the system into recognizing the resolution.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Generate an EDID file using a tool such as &lt;code&gt;edid-decode&lt;/code&gt; or &lt;code&gt;wxEDID&lt;/code&gt;, or start from a known-good one.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Save your custom file under:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo mkdir -p /lib/firmware/edid
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp 1920x1080.bin /lib/firmware/edid/
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Edit your GRUB configuration again and add:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;drm.edid_firmware=eDP-1:edid/1920x1080.bin
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Update GRUB and rebuild the initramfs (important for persistence):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-initramfs -u
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;After rebooting, check your available resolutions in your compositor’s display settings. The new resolution should now appear.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-6-select-the-new-resolution"&gt;Step 6: Select the New Resolution
-&lt;/h2&gt;&lt;p&gt;Once the kernel or compositor recognizes your forced mode, you can select it:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;GNOME (Wayland):&lt;/strong&gt;
-Open &lt;em&gt;Settings → Displays&lt;/em&gt; and choose the resolution manually.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;KDE Plasma (Wayland):&lt;/strong&gt;
-Use the GUI under &lt;em&gt;System Settings → Display and Monitor&lt;/em&gt;, or use the CLI:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor --outputs
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kscreen-doctor output.&amp;lt;ID&amp;gt;.mode.&amp;lt;MODE&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;If you don’t see your resolution, double-check the boot parameters and verify using:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;dmesg &lt;span class="p"&gt;|&lt;/span&gt; grep -i drm
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;to confirm the kernel applied the EDID or video mode correctly.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="step-7-persisting-the-configuration"&gt;Step 7: Persisting the Configuration
-&lt;/h2&gt;&lt;p&gt;Unlike Xorg, Wayland doesn’t execute &lt;code&gt;~/.profile&lt;/code&gt; on login for display modes.
-Persistence must come from:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;GRUB configuration&lt;/strong&gt; (kernel parameters), or&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;EDID injection&lt;/strong&gt; (firmware-level override).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Once configured, your system will boot with the desired resolution every time.&lt;/p&gt;
-&lt;hr&gt;
-&lt;h2 id="quick-reference-wayland-edition"&gt;Quick Reference: Wayland Edition
-&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;span class="lnt"&gt;19
-&lt;/span&gt;&lt;span class="lnt"&gt;20
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Check session type&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$XDG_SESSION_TYPE&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Identify active outputs&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ls /sys/class/drm/*/status
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add a forced resolution via GRUB&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo nano /etc/default/grub
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add inside quotes:&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet splash video=eDP-1:1920x1080@60&amp;#34;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# (Optional) Use custom EDID&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo mkdir -p /lib/firmware/edid
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo cp 1920x1080.bin /lib/firmware/edid/
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Add in GRUB:&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# drm.edid_firmware=eDP-1:edid/1920x1080.bin&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-initramfs -u
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo reboot
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;hr&gt;
-&lt;h2 id="whats-next"&gt;What’s Next?
-&lt;/h2&gt;&lt;p&gt;You’ve now learned how to unlock custom resolutions on both &lt;strong&gt;Xorg&lt;/strong&gt; and &lt;strong&gt;Wayland&lt;/strong&gt; systems.
-While Wayland requires a bit more setup, these methods ensure your system boots with the exact resolution you want — no matter what display you’re using.&lt;/p&gt;
-&lt;hr&gt;</description></item><item><title>Archives</title><link>https://hadobot.github.io/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/archives/</guid><description/></item><item><title>Links</title><link>https://hadobot.github.io/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/links/</guid><description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
+&lt;p&gt;Here’s to learning, sharing, and growing — one post at a time.&lt;/p&gt;</description></item><item><title>Archives</title><link>https://hadobot.github.io/archives/</link><pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/archives/</guid><description/></item><item><title>Links</title><link>https://hadobot.github.io/links/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/links/</guid><description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
 &lt;p&gt;This page&amp;rsquo;s frontmatter:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
