@@ -1,4 +1,197 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Hadobot Blog</title><link>https://hadobot.github.io/post/</link><description>Recent content in Posts on Hadobot Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 03 Oct 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://hadobot.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Unlocking Higher Display Resolutions on Wayland: A Step-by-Step Guide</title><link>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</link><pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</guid><description>&lt;p&gt;If you’ve followed the previous article on using &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; to unlock higher resolutions on Xorg-based systems, you might have wondered: &lt;em&gt;what about Wayland?&lt;/em&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Hadobot Blog</title><link>https://hadobot.github.io/post/</link><description>Recent content in Posts on Hadobot Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 02 Dec 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://hadobot.github.io/post/index.xml" rel="self" type="application/rss+xml"/><item><title>Access Your Home Router from Anywhere Using Tailscale and a Raspberry Pi</title><link>https://hadobot.github.io/p/access-your-home-router-from-anywhere-using-tailscale-and-a-raspberry-pi/</link><pubDate>Tue, 02 Dec 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/access-your-home-router-from-anywhere-using-tailscale-and-a-raspberry-pi/</guid><description>&lt;p&gt;Have you ever been away from home and needed to access your router’s admin panel — only to realize that it’s restricted to devices on your local Wi-Fi? That was exactly the issue I faced. I wanted my remote devices, connected over &lt;strong&gt;Tailscale&lt;/strong&gt;, to behave &lt;em&gt;as if they were physically inside my home network&lt;/em&gt;. More specifically, I wanted to type my router’s address (e.g., &lt;code&gt;192.168.1.1&lt;/code&gt;) from anywhere in the world and instantly load its admin page.&lt;/p&gt;
+&lt;p&gt;This is entirely possible using &lt;strong&gt;Tailscale Subnet Routing&lt;/strong&gt;, and one of the best devices to bridge your home network to your tailnet is a &lt;strong&gt;Raspberry Pi&lt;/strong&gt;. In this article, I’ll walk you through how to configure your Pi as a &lt;strong&gt;Tailscale subnet router&lt;/strong&gt;, enabling your remote devices to access your home LAN seamlessly including your router’s web interface.&lt;/p&gt;
+&lt;p&gt;By the end of this guide, your Raspberry Pi will automatically forward traffic between Tailscale and your home network, unlocking true remote LAN access.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-1-understand-the-goal--making-remote-devices-act-local"&gt;Step 1: Understand the Goal — Making Remote Devices Act Local
+&lt;/h2&gt;&lt;p&gt;Tailscale normally creates a peer-to-peer mesh network, allowing devices to talk securely to each other. However, most home routers and LAN devices &lt;strong&gt;don’t run Tailscale&lt;/strong&gt;, which means you can’t reach them directly.&lt;/p&gt;
+&lt;p&gt;This is where a &lt;strong&gt;subnet router&lt;/strong&gt; comes in.&lt;/p&gt;
+&lt;p&gt;A subnet router:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lives inside your home network&lt;/li&gt;
+&lt;li&gt;Runs Tailscale&lt;/li&gt;
+&lt;li&gt;Forwards traffic between Tailscale and your LAN&lt;/li&gt;
+&lt;li&gt;Allows remote devices to reach LAN-only IPs (printers, NAS, routers, IoT devices, etc.)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If your home network is &lt;code&gt;192.168.1.0/24&lt;/code&gt;, then any device in your tailnet will be able to reach addresses like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;192.168.1.1&lt;/code&gt; (your router)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;192.168.1.50&lt;/code&gt; (NAS)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;192.168.1.101&lt;/code&gt; (a PC)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This is exactly what we want.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-2-prepare-your-raspberry-pi"&gt;Step 2: Prepare Your Raspberry Pi
+&lt;/h2&gt;&lt;p&gt;Before configuring routing, make sure:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Your Pi is connected to your home LAN (Wi-Fi or preferably Ethernet).&lt;/li&gt;
+&lt;li&gt;Tailscale is installed and logged into your tailnet.&lt;br&gt;
+If not, install it with:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;curl -fsSL https://tailscale.com/install.sh &lt;span class="p"&gt;|&lt;/span&gt; sh
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo tailscale up
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Once it shows as “active” in your Tailscale admin console, you’re ready to continue.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-3-enable-ip-forwarding-on-the-raspberry-pi"&gt;Step 3: Enable IP Forwarding on the Raspberry Pi
+&lt;/h2&gt;&lt;p&gt;Enabling IP forwarding is a crucial step in setting up your Raspberry Pi as a router. Without it, your Pi cannot route packets between your local area network (LAN) and Tailscale.&lt;/p&gt;
+&lt;h3 id="run-these-commands"&gt;Run These Commands
+&lt;/h3&gt;&lt;p&gt;To enable IP forwarding, execute the following commands in your terminal:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;net.ipv4.ip_forward = 1&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;net.ipv6.conf.all.forwarding = 1&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="what-each-command-does"&gt;What Each Command Does
+&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Creates a sysctl config file specific to Tailscale:&lt;/strong&gt;
+The first command enables IPv4 packet forwarding.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;'net.ipv4.ip_forward = 1'&lt;/code&gt;&lt;/strong&gt; sets the option in the system configuration to allow forwarding of IPv4 packets.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;&lt;code&gt;tee&lt;/code&gt;&lt;/strong&gt; command reads the output of the &lt;code&gt;echo&lt;/code&gt; command and writes it to the specified configuration file.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;&lt;code&gt;-a&lt;/code&gt;&lt;/strong&gt; option ensures that the new setting is appended to the file rather than overwriting any existing content.&lt;/li&gt;
+&lt;li&gt;This configuration is saved in &lt;strong&gt;&lt;code&gt;/etc/sysctl.d/99-tailscale.conf&lt;/code&gt;&lt;/strong&gt;, which is specifically for Tailscale.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Enables IPv4 and IPv6 forwarding so your Pi can act as a router:&lt;/strong&gt;
+The second command achieves the same goal for IPv6, allowing your Pi to handle both IPv4 and IPv6 traffic.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Applies the settings immediately without needing a reboot:&lt;/strong&gt;
+The final command, &lt;strong&gt;&lt;code&gt;sudo sysctl -p /etc/sysctl.d/99-tailscale.conf&lt;/code&gt;&lt;/strong&gt;, executes the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;sysctl&lt;/code&gt;&lt;/strong&gt; modifies kernel parameters at runtime.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;&lt;code&gt;-p&lt;/code&gt;&lt;/strong&gt; option tells &lt;code&gt;sysctl&lt;/code&gt; to load and apply the settings from the specified configuration file immediately.&lt;/li&gt;
+&lt;li&gt;Using &lt;strong&gt;&lt;code&gt;/etc/sysctl.d/99-tailscale.conf&lt;/code&gt;&lt;/strong&gt;, it activates the changes without requiring a system restart.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="verify-your-settings"&gt;Verify Your Settings
+&lt;/h3&gt;&lt;p&gt;After running these commands, it&amp;rsquo;s important to check that the settings have been applied correctly. Use the following commands:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sysctl net.ipv4.ip_forward
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sysctl net.ipv6.conf.all.forwarding
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;You should see the following output:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;net.ipv4.ip_forward = 1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;net.ipv6.conf.all.forwarding = 1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This confirms that IP forwarding is enabled for both IPv4 and IPv6, readying your Raspberry Pi to act as an effective router!&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-4-advertise-your-home-lan-subnet-to-tailscale"&gt;Step 4: Advertise Your Home LAN Subnet to Tailscale
+&lt;/h2&gt;&lt;p&gt;Next, tell Tailscale which LAN subnet your Raspberry Pi should expose.
+Replace the subnet below with the actual one your router uses:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo tailscale up --advertise-routes&lt;span class="o"&gt;=&lt;/span&gt;192.168.1.0/24
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;This makes your Pi announce the entire LAN to your tailnet.&lt;/p&gt;
+&lt;p&gt;Common home subnets include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;192.168.0.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;192.168.1.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;10.0.0.0/24&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you&amp;rsquo;re unsure, run:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;ip route
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Your LAN subnet will be the one associated with &lt;code&gt;wlan0&lt;/code&gt; or &lt;code&gt;eth0&lt;/code&gt;.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-5-approve-the-route-in-the-tailscale-admin-console"&gt;Step 5: Approve the Route in the Tailscale Admin Console
+&lt;/h2&gt;&lt;p&gt;Visit:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a class="link" href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener"
+&gt;https://login.tailscale.com/admin/machines&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Select your Raspberry Pi → look for &lt;strong&gt;Advertised Routes&lt;/strong&gt; → enable the route you just declared.&lt;/p&gt;
+&lt;p&gt;This step activates the subnet routing functionality.
+Without approval, the route stays inactive.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="step-6-test-access-to-your-home-router"&gt;Step 6: Test Access to Your Home Router
+&lt;/h2&gt;&lt;p&gt;From any device connected via Tailscale (phone, laptop, remote server):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Disconnect it from your home Wi-Fi.&lt;/li&gt;
+&lt;li&gt;Ensure it’s connected to Tailscale.&lt;/li&gt;
+&lt;li&gt;Open your router’s IP address (e.g., &lt;code&gt;192.168.1.1&lt;/code&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If everything is set up correctly, the router’s login page should load instantly — even if you&amp;rsquo;re thousands of miles away.&lt;/p&gt;
+&lt;p&gt;This means your remote device is now treated as a full member of your home LAN.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="optional-step-7--add-redundancy-with-multiple-subnet-routers"&gt;Optional: Step 7 — Add Redundancy with Multiple Subnet Routers
+&lt;/h2&gt;&lt;p&gt;One of the best features of Tailscale is that &lt;strong&gt;you can advertise the same subnet from multiple devices&lt;/strong&gt;, providing automatic failover.&lt;/p&gt;
+&lt;p&gt;Simply repeat the same setup on:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A second Raspberry Pi&lt;/li&gt;
+&lt;li&gt;A NAS&lt;/li&gt;
+&lt;li&gt;A Linux server&lt;/li&gt;
+&lt;li&gt;A home PC&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As long as more than one device advertises the route, Tailscale will switch between them automatically if one goes offline.&lt;/p&gt;
+&lt;p&gt;This provides seamless, uninterrupted access to your LAN.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="quick-reference"&gt;Quick Reference
+&lt;/h2&gt;&lt;p&gt;For convenience, here are all essential commands together:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Enable IP forwarding&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;net.ipv4.ip_forward = 1&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;net.ipv6.conf.all.forwarding = 1&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sudo tee -a /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# Advertise your home LAN subnet&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo tailscale up --advertise-routes&lt;span class="o"&gt;=&lt;/span&gt;192.168.1.0/24
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;After running these, don&amp;rsquo;t forget to &lt;strong&gt;approve the route&lt;/strong&gt; in your Tailscale admin console.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="whats-next"&gt;What’s Next?
+&lt;/h2&gt;&lt;p&gt;Congratulations! Your Raspberry Pi is now acting as a Tailscale subnet router, allowing your remote devices to access your home router and any LAN device as if you were physically plugged in at home.&lt;/p&gt;
+&lt;p&gt;Stay tuned for more!&lt;/p&gt;</description></item><item><title>Unlocking Higher Display Resolutions on Wayland: A Step-by-Step Guide</title><link>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</link><pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/unlocking-higher-display-resolutions-on-wayland-a-step-by-step-guide/</guid><description>&lt;p&gt;If you’ve followed the previous article on using &lt;strong&gt;&lt;code&gt;xrandr&lt;/code&gt;&lt;/strong&gt; to unlock higher resolutions on Xorg-based systems, you might have wondered: &lt;em&gt;what about Wayland?&lt;/em&gt;
 Wayland, the modern display server protocol replacing Xorg on most Linux distributions, handles displays quite differently. It’s faster, more secure, and avoids some legacy issues — but also removes tools like &lt;code&gt;xrandr&lt;/code&gt;, which means custom resolutions require a different approach.&lt;/p&gt;
 &lt;p&gt;In this guide, we’ll explore how to achieve higher or custom resolutions on &lt;strong&gt;Wayland-based systems&lt;/strong&gt; using kernel parameters and EDID overrides. By the end, you’ll be able to force a resolution like &lt;strong&gt;1920x1080&lt;/strong&gt; even when your laptop or monitor doesn’t advertise it.&lt;/p&gt;
 &lt;hr&gt;
