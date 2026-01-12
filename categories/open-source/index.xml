@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Open Source on Hadobot Blog</title><link>https://hadobot.github.io/categories/open-source/</link><description>Recent content in Open Source on Hadobot Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://hadobot.github.io/categories/open-source/index.xml" rel="self" type="application/rss+xml"/><item><title>My First Brush with Open Source: Hacktoberfest with AMFOSS</title><link>https://hadobot.github.io/p/my-first-brush-with-open-source-hacktoberfest-with-amfoss/</link><pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate><guid>https://hadobot.github.io/p/my-first-brush-with-open-source-hacktoberfest-with-amfoss/</guid><description>&lt;h2 id="hacktoberfest-with-amfoss"&gt;Hacktoberfest with AMFOSS
+&lt;/h2&gt;&lt;p&gt;A while back, I attended a Hacktoberfest event conducted by &lt;strong&gt;AMFOSS&lt;/strong&gt; at my college. At that time, I didn’t fully realize how important that experience would be for shaping my understanding of open source, collaboration, and software development as a whole. Looking back now, it feels less like a workshop and more like an introduction to a mindset.&lt;/p&gt;
+&lt;h3 id="session-1-understanding-open-source-beyond-code"&gt;Session 1: Understanding Open Source Beyond Code
+&lt;/h3&gt;&lt;p&gt;The first session eased us into the idea of &lt;strong&gt;open source&lt;/strong&gt; not just as code available on GitHub, but as a global collaboration built on trust, learning, and shared ownership.&lt;/p&gt;
+&lt;p&gt;We were introduced to organizations like &lt;strong&gt;Kolibri&lt;/strong&gt;, which highlighted how open source can directly impact education and accessibility. This was also where I first heard deeper discussions around large-scale open-source infrastructure, like &lt;strong&gt;Docker containers and Kubernetes&lt;/strong&gt;, and how they’re used in real-world projects.&lt;/p&gt;
+&lt;p&gt;Programs such as &lt;strong&gt;GSoC (Google Summer of Code)&lt;/strong&gt; and &lt;strong&gt;LFX Mentorship&lt;/strong&gt; were discussed, opening up the idea that contributing to open source could also lead to structured mentorships and even &lt;strong&gt;remote internships&lt;/strong&gt;. Until then, I had mostly seen open source as something “advanced developers” did. This session quietly broke that myth.&lt;/p&gt;
+&lt;p&gt;We also looked at real projects: names like &lt;strong&gt;Worm&lt;/strong&gt;, &lt;strong&gt;INCF&lt;/strong&gt;, and &lt;strong&gt;Growing Graph Neural Networks&lt;/strong&gt; and how contributors collaborate through &lt;strong&gt;Slack and Discord&lt;/strong&gt;, follow contribution guidelines, and stay connected through community channels.&lt;/p&gt;
+&lt;p&gt;But what stood out the most was the honest discussion about challenges like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Imposter syndrome&lt;/strong&gt; is real, and almost everyone feels it.&lt;/li&gt;
+&lt;li&gt;Even the &lt;strong&gt;smallest contribution counts&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Large tasks become manageable when broken down step by step.&lt;/li&gt;
+&lt;li&gt;Understanding a codebase often starts with reading existing &lt;strong&gt;pull requests&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Asking for help is not weakness, even if the question feels “dumb”.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There was a strong emphasis on &lt;strong&gt;reading documentation&lt;/strong&gt;, handling feedback maturely, and always respecting the &lt;strong&gt;code of conduct and community etiquette&lt;/strong&gt;. Consistency mattered more than intensity. Stay curious. Keep learning. Keep showing up.&lt;/p&gt;
+&lt;h3 id="session-2-making-sense-of-git-and-github"&gt;Session 2: Making Sense of Git and GitHub
+&lt;/h3&gt;&lt;p&gt;The second session focused on the backbone of modern software development: &lt;strong&gt;Git and GitHub&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;We started with the basics Git as a &lt;strong&gt;distributed version control system&lt;/strong&gt;, and why it’s almost a requirement for any software developer today. The idea that Git stores &lt;strong&gt;snapshots of a project over time&lt;/strong&gt;, rather than just files, helped me understand version control more clearly.&lt;/p&gt;
+&lt;p&gt;Concepts like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Working directory, Git directory, and remote repositories&lt;/li&gt;
+&lt;li&gt;Commits and branching as independent environments&lt;/li&gt;
+&lt;li&gt;Forking vs cloning, and how pull requests fit into collaboration&lt;/li&gt;
+&lt;li&gt;Merge conflicts and code reviews&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;suddenly felt less intimidating when explained through real workflows.&lt;/p&gt;
+&lt;p&gt;We were also introduced to &lt;strong&gt;CI/CD&lt;/strong&gt;, where tools like &lt;strong&gt;GitHub Actions&lt;/strong&gt; automatically test and validate code, reinforcing the idea that quality and automation go hand in hand in professional projects. The mention of Git’s &lt;strong&gt;robust security&lt;/strong&gt; and collaborative review process made it clear why it’s trusted at scale.&lt;/p&gt;
+&lt;p&gt;Practical resources were shared too—like the &lt;strong&gt;GitHub Student Developer Pack&lt;/strong&gt; and interactive platforms such as &lt;strong&gt;learngitbranching&lt;/strong&gt;, which encouraged hands-on learning rather than passive listening.&lt;/p&gt;
+&lt;h3 id="sessions-3--4-learning-by-doing"&gt;Sessions 3 &amp;amp; 4: Learning by Doing
+&lt;/h3&gt;&lt;p&gt;The later sessions leaned into practice and experimentation. Initiatives like &lt;strong&gt;r/place&lt;/strong&gt; and &lt;strong&gt;amplace&lt;/strong&gt; were used as playful yet effective ways to learn GitHub collaboration in action. These weren’t just exercises, they were reminders that learning doesn’t always have to be rigid to be effective.&lt;/p&gt;
+&lt;p&gt;There was also a brief introduction to the &lt;strong&gt;Wikimedia movement&lt;/strong&gt;, reinforcing the broader philosophy behind open source: collective knowledge, maintained by people who care enough to contribute.&lt;/p&gt;
+&lt;h3 id="looking-back"&gt;Looking Back
+&lt;/h3&gt;&lt;p&gt;At the time, I walked away with pages of notes and a head full of concepts. Today, what stays with me is something simpler: the realization that open source is less about being an expert and more about being &lt;strong&gt;willing to learn in public&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;That Hacktoberfest event didn’t instantly turn me into an open-source contributor—but it gave me clarity. It showed me that progress comes from consistency, curiosity, and the courage to start small.&lt;/p&gt;
+&lt;p&gt;Much like this blog, the journey isn’t about perfection. It’s about showing up, learning from feedback, and slowly building confidence, one contribution at a time.&lt;/p&gt;</description></item></channel></rss>
